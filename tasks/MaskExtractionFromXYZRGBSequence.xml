@@ -1,0 +1,162 @@
+<Task>
+	<!-- reference task information -->
+	<Reference>
+		<Author>
+			<name>Dawid Kaczmarek</name>
+			<link></link>
+		</Author>
+	
+		<Description>
+			<brief>Disparity viewer</brief>
+			<full>Displays a sequence of  stereo-images (RGB and depth XYZ).</full>
+		</Description>
+	</Reference>
+
+	<!-- task definition -->
+	<Subtasks>
+		<Subtask name="Processing">
+			<Executor name="Processing" period="0.5">
+				<Component name="NextImageTrigger" type="CvBasic:Trigger" priority="1" bump="0">
+				</Component>
+				<Component name="SequenceRGB" type="CvBasic:Sequence" priority="2" bump="0">
+					<param name="sequence.directory">/home/discode/14.08.11New/loyd/rgbxyz/</param>
+					<param name="sequence.pattern">.*\_rgb\.png</param>
+					<param name="mode.loop">1</param>
+					<param name="mode.auto_trigger">0</param>						
+				</Component>
+				<Component name="SequenceXYZ" type="CvBasic:Sequence" priority="3" bump="0">
+					<param name="sequence.directory">/home/discode/14.08.11New/loyd/rgbxyz</param>
+					<param name="sequence.pattern">.*\_xyz\.yml</param>
+					<param name="mode.loop">1</param>
+					<param name="mode.auto_trigger">0</param>						
+				</Component>
+				
+				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
+					<param name="data_file">/home/discode/14.08 (kopia).11objects/calib/left.yml</param>
+					<param name="reload_file_opt">1</param>
+				</Component>
+				<Component name="DetectCircles" type="CvBasic:CvFindCirclesGrid" priority="7">
+					<param name="grid.width">3</param>
+					<param name="grid.height">5</param>
+					<param name="grid.size">0.06</param>
+				</Component>
+				<Component name="DetectCirclesInv" type="CvBasic:CvFindCirclesGrid" priority="8">
+					<param name="grid.width">3</param>
+					<param name="grid.height">5</param>
+					<param name="grid.size">0.06</param>
+					<param name="image.inverse">1</param>
+				</Component>				
+				<Component name="SolvePNP" type="CvBasic:CvSolvePnP" priority="12">
+					<param name="offset.x">0.075</param>
+					<param name="offset.y">0.233</param>
+					<param name="offset.roll">3.14159265359</param>
+				</Component>
+				<Component name="SolvePNPinv" type="CvBasic:CvSolvePnP" priority="13">
+					<param name="offset.x">0.075</param>
+					<param name="offset.y">-0.113</param>
+					<param name="offset.roll">3.14159265359</param>
+				</Component>
+				<Component name="SolveLocation" type="CvBasic:CalcObjectLocation" priority="14">
+				</Component>
+				<Component name="XYZ2Rainbow" type="CvStereo:DepthRainbow" priority="12" bump="0">
+				</Component>
+				<Component name="DepthTransform" type="CvStereo:DepthTransform" priority="15" bump="0">
+				</Component>
+				<Component name="XYZ2RainbowTransformed" type="CvStereo:DepthRainbow" priority="14" bump="0">
+				</Component>
+				<Component name="Draw" type="CvBasic:DrawCoordinateSystem" priority="17">
+				</Component>
+				<Component name="Drawinv" type="CvBasic:DrawCoordinateSystem" priority="18">
+				</Component>
+				<Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="19" bump="0">
+					<param name="BlueAxis(X).X_Min">0.05</param>
+					<param name="BlueAxis(X).X_Max">0.18</param>
+					<param name="GreenAxis(Y).Y_Min">-0.2</param>
+					<param name="GreenAxis(Y).Y_Max">0.15</param>
+					<param name="RedAxis(Z).Z_Min">-0.05</param>
+					<param name="RedAxis(Z).Z_Max">0.12</param>
+				</Component>
+			</Executor>
+		</Subtask>	
+
+		<Subtask name="Display">
+			<Executor name="Display" period="0.1">
+				<Component name="Window" type="CvBasic:CvWindow" priority="1" bump="0">
+					<param name="count">5</param>
+					<param name="title">Window,WindowInverse,Mask,XYZ,XYZTransformed</param>
+				</Component>
+			</Executor>
+		</Subtask>
+		
+		<!--Subtask name="DisplayRainbow">
+			<Executor name="DisplayRainbow" period="0.1">
+				<Component name="WindowRainbow" type="CvBasic:CvWindow" priority="1" bump="0">
+					<param name="count">2</param>
+					<param name="title">XYZ,XYZTransformed</param>
+				</Component>
+			</Executor>
+		</Subtask-->
+
+	</Subtasks>
+	
+	<!-- pipes connecting datastreams -->
+	<DataStreams>
+		<Source name="NextImageTrigger.out_trigger">
+			<sink>SequenceRGB.in_trigger</sink>
+			<sink>SequenceXYZ.in_trigger</sink>
+		</Source>
+		<Source name="SequenceRGB.out_img">
+			<sink>DetectCircles.in_img</sink>
+			<sink>DetectCirclesInv.in_img</sink>
+			<sink>Window.in_img0</sink>	
+			<sink>Window.in_img1</sink>
+		</Source>
+		<Source name="SequenceXYZ.out_img">
+			<sink>DepthTransform.in_image_xyz</sink>
+			<sink>XYZ2Rainbow.in_depth_xyz</sink>
+		</Source>
+		<Source name="DetectCircles.out_pattern">
+			<sink>SolvePNP.in_object3d</sink>	
+			<sink>Window.in_draw1</sink>
+		</Source>
+		<Source name="DetectCirclesInv.out_pattern">
+			<sink>Window.in_draw0</sink>
+			<sink>SolvePNPinv.in_object3d</sink>		
+		</Source>
+		<Source name="CameraInfoLeft.out_camera_info">
+			<sink>SolvePNP.in_camerainfo</sink>
+			<sink>SolvePNPinv.in_camerainfo</sink>
+			<sink>Drawinv.in_camera_matrix</sink>
+		</Source>
+		<Source name="Draw.out_csystem">
+			<sink>Window.in_draw0</sink>		
+		</Source>
+		<Source name="Drawinv.out_csystem">
+			<sink>Window.in_draw1</sink>		
+		</Source>
+		<Source name= "SolvePNP.out_homogMatrix">
+			<sink>SolveLocation.in_homogMatrix</sink>
+		</Source>
+		<Source name = "SolvePNPinv.out_homogMatrix">
+			<sink>SolveLocation.in_homogMatrix</sink>
+		</Source>
+		<Source name= "SolveLocation.out_homogMatrix">
+			<sink>Draw.in_homogMatrix</sink>
+			<sink>Drawinv.in_homogMatrix</sink>
+			<sink>DepthTransform.in_homogMatrix</sink>
+		</Source>
+		<Source name="DepthTransform.out_image_xyz">
+			<sink>CubicMaskExtractor.in_image_xyz</sink>
+			<sink>XYZ2RainbowTransformed.in_depth_xyz</sink>
+		</Source>
+		<Source name="XYZ2Rainbow.out_depth_rainbow">
+			<sink>Window.in_img3</sink>
+		</Source>
+		<Source name="XYZ2RainbowTransformed.out_depth_rainbow">
+			<sink>Window.in_img4</sink>
+		</Source>
+		<Source name="CubicMaskExtractor.out_mask">
+		    <sink>Window.in_img2</sink>
+		</Source>
+	</DataStreams>
+</Task>
