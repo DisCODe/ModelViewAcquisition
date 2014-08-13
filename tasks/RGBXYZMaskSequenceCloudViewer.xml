@@ -31,7 +31,13 @@
 					<param name="mode.loop">1</param>
 					<param name="mode.auto_trigger">0</param>						
 				</Component>
-                                <Component name="DepthConverter" type="PCL:DepthConverter" priority="4" bump="0">
+                                <Component name="SequenceMask" type="CvBasic:Sequence" priority="4" bump="0">
+                                        <param name="sequence.directory">/home/discode/14.08.11New/loyd/maski/</param>
+                                        <param name="sequence.pattern">.*\.png</param>
+                                        <param name="mode.loop">1</param>
+                                        <param name="mode.auto_trigger">0</param>
+                                </Component>
+                                <Component name="DepthConverter" type="PCL:DepthConverter" priority="5" bump="0">
                                 </Component>
 			</Executor>
 		</Subtask>	
@@ -39,9 +45,9 @@
 		<Subtask name="Display">
 			<Executor name="Display" period="0.1">
                                 <Component name="Window" type="PCL:CloudViewer" priority="1" bump="0">
-                                    <param name="background_r">255</param>
-                                    <param name="background_g">255</param>
-                                    <param name="background_b">255</param>
+                                    <param name="background_r">0</param>
+                                    <param name="background_g">0</param>
+                                    <param name="background_b">0</param>
 				</Component>
 			</Executor>
 		</Subtask>	
@@ -53,6 +59,7 @@
 		<Source name="NextImageTrigger.out_trigger">
 			<sink>SequenceRGB.in_trigger</sink>
 			<sink>SequenceXYZ.in_trigger</sink>
+                        <sink>SequenceMask.in_trigger</sink>
 		</Source>
 		<Source name="SequenceRGB.out_img">
                         <sink>DepthConverter.in_rgb_stereo</sink>
@@ -60,6 +67,9 @@
 		<Source name="SequenceXYZ.out_img">
                         <sink>DepthConverter.in_depth_xyz</sink>
 		</Source>
+                <Source name="SequenceMask.out_img">
+                        <sink>DepthConverter.in_mask</sink>
+                </Source>
                 <Source name="DepthConverter.out_cloud_xyzrgb">
                         <sink>Window.in_cloud_xyzrgb</sink>
 		</Source>
