@@ -32,9 +32,13 @@
 				</Component>
 				
 				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
-					<param name="data_file">/home/discode/14.08 (kopia).11objects/calib/left.yml</param>
+					<param name="data_file">/home/discode/14.08.11New/calib/left.yml</param>
 					<param name="reload_file_opt">1</param>
 				</Component>
+				<!--Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="2" bump="0">
+					<param name="camera_matrix">1526.039788256152, 0.0, 626.7003370372527; 0.0, 1516.6725148099088, 514.6590972510979; 0.0, 0.0, 1.0</param>
+					<param name="dist_coeffs">-0.23056559791316314, 0.16329105650420236, -0.00030988744721386616, 0.00037265489773335433, 0.0</param>
+				</Component-->
 				<Component name="DetectCircles" type="CvBasic:CvFindCirclesGrid" priority="7">
 					<param name="grid.width">3</param>
 					<param name="grid.height">5</param>
@@ -111,8 +115,8 @@
 			<sink>Window.in_img0</sink>	
 			<sink>Window.in_img1</sink>
 		</Source>
-		<Source name="SequenceXYZ.out_img">
-			<sink>DepthTransform.in_image_xyz</sink>
+		<Source name="SequenceXYZ.out_img">CvBasic
+			<sink>DepthTransform.in_image_xyz</sink>CvBasic
 			<sink>XYZ2Rainbow.in_depth_xyz</sink>
 		</Source>
 		<Source name="DetectCircles.out_pattern">
