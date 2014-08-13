@@ -19,21 +19,20 @@
 				<Component name="NextImageTrigger" type="CvBasic:Trigger" priority="1" bump="0">
 				</Component>
 				<Component name="SequenceRGB" type="CvBasic:Sequence" priority="2" bump="0">
-					<param name="sequence.directory">/home/discode/14.08.11New/loyd/rgbxyz/</param>
+					<param name="sequence.directory">%[TASK_LOCATION]%/../data/stereo_bible_rgbxyz/</param>
 					<param name="sequence.pattern">.*\_rgb\.png</param>
 					<param name="mode.loop">1</param>
 					<param name="mode.auto_trigger">0</param>						
 				</Component>
 				<Component name="SequenceXYZ" type="CvBasic:Sequence" priority="3" bump="0">
-					<param name="sequence.directory">/home/discode/14.08.11New/loyd/rgbxyz</param>
+					<param name="sequence.directory">%[TASK_LOCATION]%/../data/stereo_bible_rgbxyz/</param>
 					<param name="sequence.pattern">.*\_xyz\.yml</param>
 					<param name="mode.loop">1</param>
 					<param name="mode.auto_trigger">0</param>						
 				</Component>
 				
-				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
-					<param name="data_file">/home/discode/14.08 (kopia).11objects/calib/left.yml</param>
-					<param name="reload_file_opt">1</param>
+				<Component name="CameraInfo" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
+					<param name="data_file">%[TASK_LOCATION]%/../data/velma-stereo/left.yml</param>
 				</Component>
 				<Component name="DetectCircles" type="CvBasic:CvFindCirclesGrid" priority="7">
 					<param name="grid.width">3</param>
@@ -68,13 +67,13 @@
 				</Component>
 				<Component name="Drawinv" type="CvBasic:DrawCoordinateSystem" priority="18">
 				</Component>
-				<Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="19" bump="0">
-					<param name="BlueAxis(X).X_Min">0.05</param>
-					<param name="BlueAxis(X).X_Max">0.18</param>
-					<param name="GreenAxis(Y).Y_Min">-0.2</param>
-					<param name="GreenAxis(Y).Y_Max">0.15</param>
-					<param name="RedAxis(Z).Z_Min">-0.05</param>
-					<param name="RedAxis(Z).Z_Max">0.12</param>
+				<Component name="CubicMaskExtractor" type="ModelViewAcquisition:CubicMaskExtractor" priority="19" bump="0">
+					<param name="BlueAxis(X).X_Max">0.15</param>
+					<param name="BlueAxis(X).X_Min">-0.15</param>
+					<param name="GreenAxis(Y).Y_Max">0.3</param>
+					<param name="GreenAxis(Y).Y_Min">-0.3</param>
+					<param name="RedAxis(Z).Z_Max">0.3</param>
+					<param name="RedAxis(Z).Z_Min">0.03</param>
 				</Component>
 			</Executor>
 		</Subtask>	
@@ -123,7 +122,7 @@
 			<sink>Window.in_draw0</sink>
 			<sink>SolvePNPinv.in_object3d</sink>		
 		</Source>
-		<Source name="CameraInfoLeft.out_camera_info">
+		<Source name="CameraInfo.out_camera_info">
 			<sink>SolvePNP.in_camerainfo</sink>
 			<sink>SolvePNPinv.in_camerainfo</sink>
 			<sink>Drawinv.in_camera_matrix</sink>

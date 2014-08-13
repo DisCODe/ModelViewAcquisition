@@ -10,5 +10,4 @@ include(DisCODeMacros)
 GET_DATASET(@PROJECT_SOURCE_DIR@/data stereo_bible_lr)
 GET_DATASET(@PROJECT_SOURCE_DIR@/data stereo_bible_rgbxyz)
 GET_DATASET(@PROJECT_SOURCE_DIR@/data kinect_tea_rgbxyz)
-
-
+GET_DATASET(@PROJECT_SOURCE_DIR@/data kinect_inka_views)

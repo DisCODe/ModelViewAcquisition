@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Task>
+	<!-- reference task information -->
+	<Reference>
+		<Author>
+			<name>Tomasz Kornuta</name>
+			<link></link>
+		</Author>
+	
+		<Description>
+			<brief>Loads and displays a single object model view from sequence of images.</brief>
+			<full>Displays object model view, composed out of RGB, XYZ and mask images, loaded from a sequence of images.</full>	
+		</Description>
+	</Reference>
+
+	<!-- task definition -->
+	<Subtasks>
+		<Subtask name="Processing">
+			<Executor name="Processing" period="0.5">
+				<Component name="NextImageTrigger" type="CvBasic:Trigger" priority="1" bump="0">
+				</Component>
+				<Component name="SequenceRGB" type="CvBasic:Sequence" priority="2" bump="0">
+					<param name="sequence.directory">%[TASK_LOCATION]%/../data/kinect_inka_views/</param>
+					<param name="sequence.pattern">.*\_rgb\.png</param>
+					<param name="mode.loop">1</param>
+					<param name="mode.auto_trigger">0</param>						
+				</Component>
+				<Component name="SequenceXYZ" type="CvBasic:Sequence" priority="3" bump="0">
+					<param name="sequence.directory">%[TASK_LOCATION]%/../data/kinect_inka_views/</param>
+					<param name="sequence.pattern">.*\_xyz\.yml</param>
+					<param name="mode.loop">1</param>
+					<param name="mode.auto_trigger">0</param>						
+				</Component>
+				<Component name="SequenceMask" type="CvBasic:Sequence" priority="4" bump="0">
+					<param name="sequence.directory">%[TASK_LOCATION]%/../data/kinect_inka_views/</param>
+					<param name="sequence.pattern">.*\_mask\.png</param>
+					<param name="mode.loop">1</param>
+					<param name="mode.auto_trigger">0</param>						
+				</Component>
+				<Component name="DepthRainbow" type="CvStereo:DepthRainbow" priority="5" bump="0">
+				</Component>
+			</Executor>
+		</Subtask>	
+
+		<Subtask name="Display">
+			<Executor name="Display" period="0.1">
+				<Component name="Window" type="CvBasic:CvWindow" priority="1" bump="0">
+					<param name="count">3</param>
+					<param name="title">RGB, Depth Rainbow, Mask</param>
+				</Component>
+			</Executor>
+		</Subtask>	
+
+	</Subtasks>
+	
+	<!-- pipes connecting datastreams -->
+	<DataStreams>
+		<Source name="NextImageTrigger.out_trigger">
+			<sink>SequenceRGB.in_trigger</sink>
+			<sink>SequenceXYZ.in_trigger</sink>
+			<sink>SequenceMask.in_trigger</sink>
+		</Source>
+		<Source name="SequenceRGB.out_img">
+			<sink>Window.in_img0</sink>
+		</Source>
+		<Source name="SequenceXYZ.out_img">
+			<sink>DepthRainbow.in_depth_xyz</sink>
+		</Source>
+		<Source name="DepthRainbow.out_depth_rainbow">
+			<sink>Window.in_img1</sink>
+		</Source>
+		<Source name="SequenceMask.out_img">
+			<sink>Window.in_img2</sink>
+		</Source>
+	</DataStreams>
+</Task>
+

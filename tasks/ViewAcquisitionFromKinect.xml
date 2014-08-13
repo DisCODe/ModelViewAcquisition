@@ -2,13 +2,13 @@
 	<!-- reference task information -->
 	<Reference>
 		<Author>
-			<name>Marta Lepicka</name>
+			<name>Tomasz Kornuta</name>
 			<link></link>
 		</Author>
 		
 		<Description>
-			<brief>SIFTObjectModel:DetectCircles</brief>
-			<full>Detect circles on images loaded by sequence or via Kinect</full>	
+			<brief>Displays object model view acquired from Kinect.</brief>
+			<full>Displays an object model view, composed out of RGB, XYZ and mask images, acquired from the Kinect sensor. Enables saving to files (png,yml and png recpectivelly).</full>	
 		</Description>
 	</Reference>
 	
@@ -75,6 +75,9 @@
 					<param name="RedAxis(Z).Z_Min">0.03</param>
 				</Component>
 			</Executor>
+		</Subtask>
+		
+		<Subtask name="Visualization">
 			<Executor name="Visualization" period="0.1">
 				<Component name="Window" type="CvBasic:CvWindow" priority="1" bump="0">
 					<param name="count">4</param>
@@ -82,6 +85,20 @@
 				</Component>
 			</Executor>
 		</Subtask>
+
+		<Subtask name="Writing">
+			<Executor name="Exec3" period="0.1">
+				<Component name="ImageWriter" type="CvBasic:ImageWriter" priority="1" bump="0">
+					<param name="directory">%[TASK_LOCATION]%/../data/</param>
+					<param name="count">3</param>
+					<param name="digits">2</param>
+					<param name="base_name">rgb,xyz,mask</param>
+					<param name="format">png,yml,png</param>
+					<param name="mode.auto_trigger">0</param>
+				</Component>
+			</Executor>
+		</Subtask>	
+			
 	</Subtasks>
 	
 	<!-- pipes connecting datastreams -->
@@ -90,6 +107,7 @@
 			<sink>DetectCircles.in_img</sink>
 			<sink>DetectCirclesInv.in_img</sink>
 			<sink>Window.in_img0</sink>	
+			<sink>ImageWriter.in_img0</sink>		
 		</Source>
 		<Source name="Sequence.out_depth">
 			<sink>DepthConverter.in_depth</sink>	
@@ -97,7 +115,8 @@
 		<Source name="DepthConverter.out_img">
 		  	<sink>DepthTransform.in_image_xyz</sink>
 			<sink>XYZ2Rainbow.in_depth_xyz</sink>
-		      </Source>
+			<sink>ImageWriter.in_img1</sink>		
+      </Source>
 		<Source name="DetectCircles.out_pattern">
 			<sink>SolvePNP.in_object3d</sink>		
 		</Source>
@@ -134,6 +153,7 @@
 		</Source>
 		<Source name="CubicMaskExtractor.out_mask">
 		    <sink>Window.in_img3</sink>
+			<sink>ImageWriter.in_img2</sink>		
 		 </Source>
 	</DataStreams>
 </Task>
