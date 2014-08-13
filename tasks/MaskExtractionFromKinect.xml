@@ -66,13 +66,13 @@
 				<Component name="XYZ2RainbowTransformed" type="CvStereo:DepthRainbow" priority="14" bump="0">
 				</Component>
 
-				<Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="19" bump="0">
-					<param name="BlueAxis(X).X_Min">-0.7</param>
-					<param name="BlueAxis(X).X_Max">0.5</param>
-					<param name="GreenAxis(Y).Y_Min">-1.0</param>
-					<param name="GreenAxis(Y).Y_Max">1.0</param>
-					<param name="RedAxis(Z).Z_Min">-0.47</param>
-					<param name="RedAxis(Z).Z_Max">1.0</param>
+				<Component name="CubicMaskExtractor" type="ModelViewAcquisition:CubicMaskExtractor" priority="19" bump="0">
+					<param name="BlueAxis(X).X_Max">0.15</param>
+					<param name="BlueAxis(X).X_Min">-0.15</param>
+					<param name="GreenAxis(Y).Y_Max">0.3</param>
+					<param name="GreenAxis(Y).Y_Min">-0.3</param>
+					<param name="RedAxis(Z).Z_Max">0.3</param>
+					<param name="RedAxis(Z).Z_Min">0.03</param>
 				</Component>
 			</Executor>
 			<Executor name="Visualization" period="0.1">
