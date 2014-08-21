@@ -1,0 +1,86 @@
+<Task>
+	<!-- reference task information -->
+	<Reference>
+		<Author>
+			<name>Tomasz Kornuta</name>
+			<link></link>
+		</Author>
+		
+		<Description>
+			<brief></brief>
+			<full>Post-calibration of the left stereo camera</full>	
+		</Description>
+	</Reference>
+	
+	<!-- task definition -->
+	<Subtasks>
+		<Subtask name="Processing">
+			<Executor name="Exec1"  period="0.1">
+				<Component name="Source" type="CvBasic:Sequence" priority="1" bump="0">
+					<param name="sequence.pattern">.*\_rgb\.png</param>
+					<param name="sequence.directory">/home/discode/19.08.14stereo/views/loyd/xyz_rgb</param>
+					<param name="mode.loop">0</param>
+					<param name="mode.auto_trigger">0</param>
+				</Component>
+								
+				<Component name="CameraInfo" type="CvCoreTypes:CameraInfoProvider" priority="2">
+					<param name="width">1063</param>
+					<param name="height">972</param>
+					<param name="camera_matrix">1 0 0 ; 0 1 0 ; 0 0 1</param>
+					<param name="dist_coeffs">0 0 0 0 0 0 0 0</param>
+				</Component>
+				
+				<Component name="Undistort" type="CvBasic:CvUndistort" priority="3" bump="0">
+				</Component>
+				
+				<Component name="DetectCircles" type="CvBasic:CvFindCirclesGrid" priority="4">
+					<param name="grid.width">3</param>
+					<param name="grid.height">5</param>
+					<param name="grid.size">0.06</param>
+				</Component>
+				
+				<Component name="Calib" type="CvBasic:Calib" priority="5" bump="0">
+					
+				</Component>
+				
+			</Executor>
+		</Subtask>
+		
+		<Subtask name="Visualisation">
+			<Executor name="Exec2" period="0.2">
+				<Component name="Window" type="CvBasic:CvWindow" priority="1" bump="0">
+					<param name="count">2</param>
+					<param name="title">Original,Undistorted</param>
+				</Component>
+			</Executor>
+		</Subtask>	
+	
+	</Subtasks>
+	
+	<!-- pipes connecting datastreams -->
+	<DataStreams>
+		<Source name="Source.out_img">
+			<sink>Undistort.in_img</sink>		
+			<sink>DetectCircles.in_img</sink>
+			<sink>Window.in_img0</sink>		
+		</Source>
+		<Source name="CameraInfo.out_camera_info">
+			<sink>Undistort.in_camera_info</sink>
+			<sink>Calib.in_camera_info</sink>
+		</Source>
+		<Source name="DetectCircles.out_pattern">
+			<sink>Window.in_draw0</sink>
+			<sink>Calib.in_object3d</sink>		
+		</Source>
+		<Source name="Calib.out_camera_info">
+			<sink>CameraInfo.in_camera_info</sink>
+		</Source>
+		<Source name="Undistort.out_img">
+			<sink>Window.in_img1</sink>		
+		</Source>
+	</DataStreams>
+</Task>
+
+
+
+
