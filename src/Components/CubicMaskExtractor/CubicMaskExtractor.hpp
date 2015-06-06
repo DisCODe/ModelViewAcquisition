@@ -1,6 +1,6 @@
 /*!
  * \file
- * \brief 
+ * \brief
  * \author Łukasz Żmuda
  */
 
@@ -13,33 +13,9 @@
 #include "Property.hpp"
 #include "EventHandler2.hpp"
 
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl/segmentation/extract_clusters.h>
-#include <pcl/ModelCoefficients.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/filters/extract_indices.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/features/normal_3d.h>
-#include <pcl/kdtree/kdtree.h>
 #include <opencv2/opencv.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 #include <Types/CameraInfo.hpp>
 #include "Types/HomogMatrix.hpp"
-#include <pcl/io/ply_io.h>
-#include <pcl/console/parse.h>
-#include <pcl/common/transforms.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/filters/passthrough.h>
-
-
-
-
 
 namespace Processors {
 namespace CubicMaskExtractor {
@@ -64,11 +40,11 @@ public:
 
 	/*!
 	 * Prepare components interface (register streams and handlers).
-	 * At this point, all properties are already initialized and loaded to 
+	 * At this point, all properties are already initialized and loaded to
 	 * values set in config file.
 	 */
 	void prepareInterface();
-	
+
 	Base::Property<double> prop_XAxisMin_treshold;
 	Base::Property<double> prop_XAxisMax_treshold;
 	Base::Property<double> prop_YAxisMin_treshold;
@@ -105,11 +81,11 @@ protected:
 	//Base::DataStreamIn <cv::Point3d> in_centerMassPoint;
 	// Output data streams
 	Base::DataStreamOut <cv::Mat> out_mask;
-	
+
 	// Handlers
 	Base::EventHandler2 h_filter;
 
-	
+
 	// Handlers
 	void filter();
 
